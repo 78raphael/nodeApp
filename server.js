@@ -1,4 +1,5 @@
 // load the things we need
+var PORT = process.env.PORT || 8080;
 var express = require('express');
 var app = express();
 
@@ -27,5 +28,5 @@ app.get('/about', function(req, res) {
     res.render('pages/about');
 });
 
-app.listen(8080);
+app.listen(PORT);
 console.log('8080 is the magic port');
