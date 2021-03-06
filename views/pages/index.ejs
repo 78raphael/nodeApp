@@ -1,32 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
     <%- include('../partials/head'); %>
-</head>
-<body class="container">
+  </head>
+  <body class="container">
 
-    <header>
-        <%- include('../partials/header'); %>
-    </header>
+  <header>
+  <%- include('../partials/header'); %>
+  </header>
 
-    <main>
-        <div class="jumbotron">
-            <h1>Top Mascots</h1>
-            <p><%= tagline %></p>
-            <ul>
-                <% mascots.forEach(function(mascot) { %>
-                    <li>
-                        <strong><%= mascot.name %></strong>
-                        representing <%= mascot.organization %>, born <%= mascot.birth_year %>
-                    </li>
-                <% }); %>
-            </ul>
-        </div>
-    </main>
+  <main>
+    <div class="jumbotron">
+      <form method="POST" action="">
+        <label for="item-weight">Weight of Item:</label><br>
+        <input type="text" name="item-weight" required><br><br>
 
-    <footer>
-        <%- include('../partials/footer'); %>
-    </footer>
+        <label for="mail-type">Type of Mail:</label><br>
+        <select name="mail-type">
+          <option value="" selected disabled>Select a Type</option>
+          <option value="1">Letter (Stamped)</option>
+          <option value="2">Letter (Metered)</option>
+          <option value="3">Large Envelope (Flats)</option>
+          <option value="4">First-Class Package Service (Retail)</option>
+        </select>
+      </form>
+    </div>
+  </main>
 
-</body>
+  <footer>
+    <%- include('../partials/footer'); %>
+  </footer>
+
+  </body>
 </html>
