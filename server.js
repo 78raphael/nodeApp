@@ -3,7 +3,7 @@ var PORT = process.env.PORT || 8080;
 var express = require('express');
 var app = express();
 
-var rates = [{
+var mail = [{
   "name": "Letters (Stamped)",
   "value": 1,
   "rates": {
@@ -65,14 +65,16 @@ var setParams = function(req, res, next)  {
   next()
 }
 
-function getRate(type, weight)  {
-  console.log("type: ", type);
-  console.log("weight: ", weight);
+function getRate(mailtype, itemweight)  {
+  let type = Number(mailtype)
+  let weight = Math.trunc(Number(itemweight))
+  let mRate = mail[type-1]['rates'];
 
-  console.log("Rates array: ", rates);
-  console.log("Rates value: ", rates[0].value);
-  
-
+  for(const rate in mRate)  {
+    if(rate == weight) {
+      return mRate[rate];
+    }
+  }
 }
 
 // set the view engine to ejs
@@ -87,16 +89,16 @@ app.use(setParams);
 // index page 
 app.get('/', function(req, res) {
     res.render('pages/index', {
-      rates: rates
+      mail: mail
     });
 });
 
 app.post('/calculate', (req, res ) =>  {
-  getRate(req.mail_type, req.item_weight)
 
   res.render('pages/rates', {
     item_weight: req.item_weight,
-    mail_type: req.mail_type
+    mail_type: req.mail_type,
+    rate: getRate(req.mail_type, req.item_weight)
   });
   res.end();
 });
