@@ -69,19 +69,16 @@ var setParams = function(req, res, next)  {
 function getRate(mailtype, itemweight)  {
   let type = Number(mailtype),
   weight = Math.trunc(Number(itemweight)),
-  mRate = mail[type]['rates'],
-  lastKey = Object.keys(mRate).pop();
+  mRates = mail[type]['rates'],
+  lastKey = Object.keys(mRates).pop();
 
-
-  for(const rate in mRate)  {
-    if(rate)  {
-      if(rate == weight) {
-        return mRate[rate];
-      }
+  for(const rate in mRates)  {
+    if(rate == weight) {
+      return mRates[rate];
     }
   }
   
-  return mRate[lastKey];
+  return mRates[lastKey];
 }
 
 // set the view engine to ejs
@@ -96,6 +93,7 @@ app.get('/', function(req, res) {
     res.render('pages/index', {
       mail: mail
     });
+    res.end();
 });
 
 app.post('/calculate', (req, res ) =>  {
