@@ -5,7 +5,7 @@ var app = express();
 
 var mail = [{
   "name": "Letters (Stamped)",
-  "value": 1,
+  "value": 0,
   "rates": {
     1: "0.55",
     2: "0.75",
@@ -14,7 +14,7 @@ var mail = [{
   }
 },{
   "name": "Letters (Metered)",
-  "value": 2,
+  "value": 1,
   "rates": {
     1: "0.51",
     2: "0.71",
@@ -23,7 +23,7 @@ var mail = [{
   }
 },{
   "name": "Large Envelope (Flats)",
-  "value": 3,
+  "value": 2,
   "rates": {
     1: "1.00",
     2: "1.20",
@@ -41,7 +41,7 @@ var mail = [{
   }
 },{
   "name": "First-Class Package Service (Retail)",
-  "value": 4,
+  "value": 3,
   "rates": {
     1: "4.00",
     2: "4.00",
@@ -62,13 +62,14 @@ var mail = [{
 var setParams = function(req, res, next)  {
   req.item_weight = req.body.item_weight;
   req.mail_type = req.body.mail_type;
+  req.name = mail[req.body.mail_type];
   next()
 }
 
 function getRate(mailtype, itemweight)  {
   let type = Number(mailtype)
   let weight = Math.trunc(Number(itemweight))
-  let mRate = mail[type-1]['rates'];
+  let mRate = mail[type]['rates'];
 
   for(const rate in mRate)  {
     if(rate == weight) {
@@ -97,15 +98,10 @@ app.post('/calculate', (req, res ) =>  {
 
   res.render('pages/rates', {
     item_weight: req.item_weight,
-    mail_type: req.mail_type,
+    name: req.name.name,
     rate: getRate(req.mail_type, req.item_weight)
   });
   res.end();
-});
-
-// about page
-app.get('/about', function(req, res) {
-    res.render('pages/about');
 });
 
 app.listen(PORT, () => {
