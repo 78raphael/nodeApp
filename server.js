@@ -67,15 +67,21 @@ var setParams = function(req, res, next)  {
 }
 
 function getRate(mailtype, itemweight)  {
-  let type = Number(mailtype)
-  let weight = Math.trunc(Number(itemweight))
-  let mRate = mail[type]['rates'];
+  let type = Number(mailtype),
+  weight = Math.trunc(Number(itemweight)),
+  mRate = mail[type]['rates'],
+  lastKey = Object.keys(mRate).pop();
+
 
   for(const rate in mRate)  {
-    if(rate == weight) {
-      return mRate[rate];
+    if(rate)  {
+      if(rate == weight) {
+        return mRate[rate];
+      }
     }
   }
+  
+  return mRate[lastKey];
 }
 
 // set the view engine to ejs
@@ -85,9 +91,7 @@ app.use(express.urlencoded({
 }));
 app.use(setParams);
 
-// use res.render to load up an ejs view file
-
-// index page 
+// index page
 app.get('/', function(req, res) {
     res.render('pages/index', {
       mail: mail
