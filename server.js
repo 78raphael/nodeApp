@@ -10,7 +10,9 @@ process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0;
 
 const pool = new Pool({
   connectionString: connectionString,
-  ssl: bool
+  ssl: {
+    rejectUnauthorized: false 
+  }
 });
 
 pool.query('SELECT * FROM users;', (err, res) => {
