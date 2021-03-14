@@ -6,6 +6,7 @@ const { Pool } = require('pg');
 
 const connectionString = process.env.DATABASE_URL || "postgres://jay:jay_pass@localhost:5432/postgres";
 var bool = process.env.DATABASE_URL ? true : false;
+process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0;
 
 const pool = new Pool({
   connectionString: connectionString,
