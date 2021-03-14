@@ -3,17 +3,27 @@ var PORT = process.env.PORT || 8080;
 var express = require('express');
 var app = express();
 const { Pool } = require('pg');
+var guts;
 
-const connectionString = process.env.DATABASE_URL || "postgres://jay:jay_pass@localhost:5432/postgres";
+// const connectionString = process.env.DATABASE_URL || "postgres://jay:jay_pass@localhost:5432/postgres";
 var bool = process.env.DATABASE_URL ? true : false;
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0;
 
-const pool = new Pool({
-  connectionString: connectionString,
-  ssl: {
-    rejectUnauthorized: false 
-  }
-});
+if(!bool) {
+  guts = {
+    connectionString: "postgres://jay:jay_pass@localhost:5432/postgres",
+    ssl: bool
+  };
+} else {
+  guts = {
+    connectionString: process.env.DATABASE_URL,
+    ssl: {
+      rejectUnauthorized: false 
+    }
+  };
+}
+
+const pool = new Pool( guts );
 
 pool.query('SELECT * FROM users;', (err, res) => {
   if (err) throw err;
