@@ -12,19 +12,10 @@
   <main>
     <div class="jumbotron">
       <form method="POST" action="/calculate">
-        <label for="item_weight">Weight of Item (in ounces):</label><br>
-        <input type="text" name="item_weight" required> oz<br><br>
+        <label for="item_weight">Sign in</label><br>
+        <input type="text" name="username" placeholder="Username" required><br><br>
 
-        <label for="mail_type">Type of Mail:</label><br>
-        <select name="mail_type" required>
-          <option value="" selected disabled>Select a Type</option>
-          <% mail.forEach( (item) => { %>
-            <option value="<%= item.value %>"><%= item.name %></option>
-          <% }) %>
-        </select>
-
-        <br>
-        <br>
+        <input type="password" name="password" placeholder="Password" required><br><br>
 
         <input type="submit" value="Submit">
       </form>
