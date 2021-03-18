@@ -5,7 +5,6 @@ var app = express();
 const { Pool } = require('pg');
 var guts;
 
-// const connectionString = process.env.DATABASE_URL || "postgres://jay:jay_pass@localhost:5432/postgres";
 var bool = process.env.DATABASE_URL ? true : false;
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0;
 
@@ -25,14 +24,6 @@ if(!bool) {
 
 const pool = new Pool( guts );
 
-pool.query('SELECT * FROM users;', (err, res) => {
-  if (err) throw err;
-  for (let row of res.rows) {
-    console.log(JSON.stringify(row));
-  }
-  pool.end();
-});
-
 // Middleware
 // var setParams = function(req, res, next)  {
 //   req.item_weight = req.body.item_weight;
@@ -50,14 +41,36 @@ app.use(express.urlencoded({
 // app.use(setParams);
 
 // index page
-app.get('/', function(req, res) {
-    res.render('pages/index', {
-      // mail: mail
-    });
-    res.end();
+app.get('/', (req, res) => {
+  res.render('pages/index', {
+  // mail: mail
+  });
+  res.end();
+});
+
+app.post('/validate', (req, res) => {
+  checkUser(req.body.username, req.body.password);
+
+
+  res.render('pages/landing', {
+
+  });
+  res.end();
 });
 
 app.listen(PORT, () => {
   console.log('8080 is the magic port');
 });
 
+var checkUser = (usr, pass) => {
+  console.log("checkUser: ", usr);
+  
+  pool.query('SELECT firstName, lastName, password FROM users WHERE username = $1', [usr], (err, res) => {
+    if (err) throw err; 
+
+    for (let row of res.rows) {
+      console.log(JSON.stringify(row));
+    }
+    pool.end();
+  });
+}
