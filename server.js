@@ -23,6 +23,9 @@ if(!bool) {
 }
 
 const pool = new Pool( guts );
+pool.on('connect', () => {
+  console.log('Connected to DB');
+});
 
 // Middleware
 // var setParams = function(req, res, next)  {
@@ -49,28 +52,26 @@ app.get('/', (req, res) => {
 });
 
 app.post('/validate', (req, res) => {
-  checkUser(req.body.username, req.body.password);
 
+  pool.query('SELECT firstName, lastName, password FROM users WHERE username = $1', [req.body.username], (error, response) => {
+    if (error) throw error;
 
-  res.render('pages/landing', {
+    if(req.body.password.trim() === response.rows[0].password.trim()) {
 
+      var name = response.rows[0].firstname + ' ' + response.rows[0].lastname;
+
+      res.render('pages/landing', {
+        name: name
+      });
+      res.end();
+      return;
+    }
+    res.redirect('/');
+    return;
   });
-  res.end();
+  // pool.end();
 });
 
 app.listen(PORT, () => {
   console.log('8080 is the magic port');
 });
-
-var checkUser = (usr, pass) => {
-  console.log("checkUser: ", usr);
-  
-  pool.query('SELECT firstName, lastName, password FROM users WHERE username = $1', [usr], (err, res) => {
-    if (err) throw err; 
-
-    for (let row of res.rows) {
-      console.log(JSON.stringify(row));
-    }
-    pool.end();
-  });
-}
