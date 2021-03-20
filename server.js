@@ -72,6 +72,57 @@ app.post('/validate', (req, res) => {
   // pool.end();
 });
 
+app.get('/register', (req, res) => {
+
+  pool.query('SELECT id, name FROM social_media', (error, response) => {
+    if (error) throw error;
+
+    if(!response.rows) {
+      res.redirect('/');
+      return;
+    }
+
+    res.render('pages/register', {
+      socials: response.rows
+    });
+    res.end();
+  });
+});
+
+app.post('/submit-register', (req, res) => {
+
+  pool.query('SELECT username FROM users', (error, response) => {
+    if(error) throw error;
+
+    for(let row of response.rows)  {
+      if(req.body.username.trim() === row.username.trim()) {
+        pool.query('SELECT id, name FROM social_media', (er, re) => {
+          if (er) throw er;
+
+          res.render('pages/register', {
+            socials: re.rows,
+            message: "Username already in use. Please select another"
+          });
+          res.end();
+        });
+      }
+    }
+
+
+    pool.query('INSERT INTO users (firstname, lastname, username, password) VALUES ($1, $2, $3, $4)', [
+      req.body.firstname.trim(),
+      req.body.lastname.trim(),
+      req.body.username.trim(),
+      req.body.password.trim()
+    ], (error, response) => {
+      if(error) throw error;
+    });
+
+
+  });
+
+});
+
 app.listen(PORT, () => {
   console.log('8080 is the magic port');
 });

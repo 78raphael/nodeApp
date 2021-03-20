@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('../partials/head'); %>
+  </head>
+  <body class="container">
+
+  <header>
+  <%- include('../partials/header'); %>
+  </header>
+
+  <main>
+    <div class="jumbotron">
+      <div>
+        <h3>Register an Account</h3>
+      </div>
+      <div>
+        <%= locals.message ? message : '' %>
+      </div>
+      <div>
+        <form method="POST" action="/submit-register">
+          <label for="firstname">First Name</label><br>
+          <input type="text" name="firstname" placeholder="First Name" required><br><br>
+
+          <label for="lastname">Last Name</label><br>
+          <input type="text" name="lastname" placeholder="Last Name" required><br><br>
+
+          <label for="username">User Name</label><br>
+          <input type="text" name="username" placeholder="User Name" required><br><br>
+
+          <label for="password">Password</label><br>
+          <input type="text" name="password" placeholder="Password" required><br><br>
+
+          <label for="socials">Social Media</label><br>
+          <select>
+            <option value="0" selected disabled>Select One</option>
+            <% socials.forEach(function(media) { %>
+              <option value="<%= media.id %>"><%= media.name %></option>
+            <% }); %>
+
+          </select>
+
+          <br><br>
+
+          <input type="submit" value="Register">
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <%- include('../partials/footer'); %>
+  </footer>
+
+  </body>
+</html>
