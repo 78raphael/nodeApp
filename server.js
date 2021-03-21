@@ -28,12 +28,15 @@ pool.on('connect', () => {
 });
 
 // Middleware
-// var setParams = function(req, res, next)  {
-//   req.item_weight = req.body.item_weight;
-//   req.mail_type = req.body.mail_type;
-//   req.name = mail[req.body.mail_type];
-//   next()
-// }
+var setDropDown = function(req, res, next)  {
+  pool.query('SELECT id, name FROM social_media', (error, response) => {
+    if (error) throw error;
+    console.log("response.rows", response.rows);
+
+    req.locals.dropDown = response.rows;
+  });
+  next();
+}
 
 
 // set the view engine to ejs
@@ -41,7 +44,8 @@ app.set('view engine', 'ejs');
 app.use(express.urlencoded({
   extended: true
 }));
-// app.use(setParams);
+
+app.use(setDropDown);
 
 // index page
 app.get('/', (req, res) => {
@@ -74,19 +78,20 @@ app.post('/validate', (req, res) => {
 
 app.get('/register', (req, res) => {
 
-  pool.query('SELECT id, name FROM social_media', (error, response) => {
-    if (error) throw error;
+  // pool.query('SELECT id, name FROM social_media', (error, response) => {
+  //   if (error) throw error;
 
-    if(!response.rows) {
-      res.redirect('/');
-      return;
-    }
+  //   if(!response.rows) {
+  //     res.redirect('/');
+  //     return;
+  //   }
+  console.log("req.drop-down-menu 2", req.drop_down_menu);
 
-    res.render('pages/register', {
-      socials: response.rows
+    return res.render('pages/register', {
+      socials: locals.dropDown,
     });
     res.end();
-  });
+  // });
 });
 
 app.post('/submit-register', (req, res) => {
@@ -104,6 +109,7 @@ app.post('/submit-register', (req, res) => {
             message: "Username already in use. Please select another"
           });
           res.end();
+          return;
         });
       }
     }
@@ -116,9 +122,13 @@ app.post('/submit-register', (req, res) => {
       req.body.password.trim()
     ], (error, response) => {
       if(error) throw error;
+
+      pool.end();
+      res.redirect('/');
+      return;
     });
 
-
+    return;
   });
 
 });
