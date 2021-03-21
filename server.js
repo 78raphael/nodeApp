@@ -31,9 +31,9 @@ pool.on('connect', () => {
 var setDropDown = function(req, res, next)  {
   pool.query('SELECT id, name FROM social_media', (error, response) => {
     if (error) throw error;
-    console.log("response.rows", response.rows);
+    // console.log("response.rows", response.rows);
 
-    req.locals.dropDown = response.rows;
+    // req.locals.dropDown = response.rows;
   });
   next();
 }
@@ -44,7 +44,6 @@ app.set('view engine', 'ejs');
 app.use(express.urlencoded({
   extended: true
 }));
-
 app.use(setDropDown);
 
 // index page
@@ -78,20 +77,19 @@ app.post('/validate', (req, res) => {
 
 app.get('/register', (req, res) => {
 
-  // pool.query('SELECT id, name FROM social_media', (error, response) => {
-  //   if (error) throw error;
+  pool.query('SELECT id, name FROM social_media', (error, response) => {
+    if (error) throw error;
 
-  //   if(!response.rows) {
-  //     res.redirect('/');
-  //     return;
-  //   }
-  console.log("req.drop-down-menu 2", req.drop_down_menu);
+    if(!response.rows) {
+      res.redirect('/');
+      return;
+    }
 
-    return res.render('pages/register', {
-      socials: locals.dropDown,
+    res.render('pages/register', {
+      socials: response.rows
     });
     res.end();
-  // });
+  });
 });
 
 app.post('/submit-register', (req, res) => {
