@@ -28,15 +28,19 @@ pool.on('connect', () => {
 });
 
 // Middleware
-var setDropDown = function(req, res, next)  {
-  pool.query('SELECT id, name FROM social_media', (error, response) => {
-    if (error) throw error;
-    // console.log("response.rows", response.rows);
+// var setDropDown = function(req, res, next)  {
+//   let dropValues;
+//   pool.query('SELECT id, name FROM social_media', (error, response) => {
+//     if (error) throw error
 
-    // req.locals.dropDown = response.rows;
-  });
-  next();
-}
+//     dropValues = response.rows
+//     console.log("dropValues: ", dropValues)
+//   })
+
+//   req.dropMenu = dropValues
+//   console.log("req.dropMenu: ", req.dropMenu)
+//   next()
+// }
 
 
 // set the view engine to ejs
@@ -44,7 +48,7 @@ app.set('view engine', 'ejs');
 app.use(express.urlencoded({
   extended: true
 }));
-app.use(setDropDown);
+// app.use(setDropDown);
 
 // index page
 app.get('/', (req, res) => {
