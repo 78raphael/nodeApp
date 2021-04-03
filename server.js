@@ -1,140 +1,110 @@
-// load the things we need
-var PORT = process.env.PORT || 8080;
-var express = require('express');
-var app = express();
-const { Pool } = require('pg');
-var guts;
+const express = require('express');
+const path = require('path');
+// const { Pool } = require('pg');
 
-var bool = process.env.DATABASE_URL ? true : false;
+const verifyController = require('./controllers/verifyController.js');
+
+const PORT = process.env.PORT || 8080;
+// var bool = process.env.DATABASE_URL ? true : false;
+
+var app = express();
+// var guts;
+
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0;
 
-if(!bool) {
-  guts = {
-    connectionString: "postgres://jay:jay_pass@localhost:5432/postgres",
-    ssl: bool
-  };
-} else {
-  guts = {
-    connectionString: process.env.DATABASE_URL,
-    ssl: {
-      rejectUnauthorized: false 
-    }
-  };
-}
-
-const pool = new Pool( guts );
-pool.on('connect', () => {
-  console.log('Connected to DB');
-});
-
-// Middleware
-// var setDropDown = function(req, res, next)  {
-//   let dropValues;
-//   pool.query('SELECT id, name FROM social_media', (error, response) => {
-//     if (error) throw error
-
-//     dropValues = response.rows
-//     console.log("dropValues: ", dropValues)
-//   })
-
-//   req.dropMenu = dropValues
-//   console.log("req.dropMenu: ", req.dropMenu)
-//   next()
+// if(!bool) {
+//   guts = {
+//     connectionString: "postgres://jay:jay_pass@localhost:5432/postgres",
+//     ssl: bool
+//   };
+// } else {
+//   guts = {
+//     connectionString: process.env.DATABASE_URL,
+//     ssl: {
+//       rejectUnauthorized: false 
+//     }
+//   };
 // }
 
+// const pool = new Pool( guts );
+// pool.on('connect', () => {
+//   console.log('Connected to DB');
+// });
 
 // set the view engine to ejs
 app.set('view engine', 'ejs');
+app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.urlencoded({
   extended: true
 }));
-// app.use(setDropDown);
 
 // index page
 app.get('/', (req, res) => {
+
   res.render('pages/index', {
   // mail: mail
   });
   res.end();
 });
 
-app.post('/validate', (req, res) => {
+app.post('/validate', verifyController.verify);
 
-  pool.query('SELECT firstName, lastName, password FROM users WHERE username = $1', [req.body.username], (error, response) => {
-    if (error) throw error;
+// app.get('/register', (req, res) => {
 
-    if(req.body.password.trim() === response.rows[0].password.trim()) {
+//   pool.query('SELECT id, name FROM social_media', (error, response) => {
+//     if (error) throw error;
 
-      var name = response.rows[0].firstname + ' ' + response.rows[0].lastname;
+//     if(!response.rows) {
+//       res.redirect('/');
+//       return;
+//     }
 
-      res.render('pages/landing', {
-        name: name
-      });
-      res.end();
-      return;
-    }
-    res.redirect('/');
-    return;
-  });
-  // pool.end();
-});
+//     res.render('pages/register', {
+//       socials: response.rows
+//     });
+//     res.end();
+//   });
+// });
 
-app.get('/register', (req, res) => {
+// app.post('/submit-register', (req, res) => {
 
-  pool.query('SELECT id, name FROM social_media', (error, response) => {
-    if (error) throw error;
+//   pool.query('SELECT username FROM users', (error, response) => {
+//     if(error) throw error;
 
-    if(!response.rows) {
-      res.redirect('/');
-      return;
-    }
+//     for(let row of response.rows)  {
+//       if(req.body.username.trim() === row.username.trim()) {
+//         pool.query('SELECT id, name FROM social_media', (er, re) => {
+//           if (er) throw er;
 
-    res.render('pages/register', {
-      socials: response.rows
-    });
-    res.end();
-  });
-});
-
-app.post('/submit-register', (req, res) => {
-
-  pool.query('SELECT username FROM users', (error, response) => {
-    if(error) throw error;
-
-    for(let row of response.rows)  {
-      if(req.body.username.trim() === row.username.trim()) {
-        pool.query('SELECT id, name FROM social_media', (er, re) => {
-          if (er) throw er;
-
-          res.render('pages/register', {
-            socials: re.rows,
-            message: "Username already in use. Please select another"
-          });
-          res.end();
-          return;
-        });
-      }
-    }
+//           res.render('pages/register', {
+//             socials: re.rows,
+//             message: "Username already in use. Please select another"
+//           });
+//           res.end();
+//           return;
+//         });
+//       }
+//     }
 
 
-    pool.query('INSERT INTO users (firstname, lastname, username, password) VALUES ($1, $2, $3, $4)', [
-      req.body.firstname.trim(),
-      req.body.lastname.trim(),
-      req.body.username.trim(),
-      req.body.password.trim()
-    ], (error, response) => {
-      if(error) throw error;
+//     pool.query('INSERT INTO users (firstname, lastname, username, password) VALUES ($1, $2, $3, $4)', [
+//       req.body.firstname.trim(),
+//       req.body.lastname.trim(),
+//       req.body.username.trim(),
+//       req.body.password.trim()
+//     ], (error, response) => {
+//       if(error) throw error;
 
-      pool.end();
-      res.redirect('/');
-      return;
-    });
+//       pool.end();
+//       res.redirect('/');
+//       return;
+//     });
 
-    return;
-  });
+//     return;
+//   });
 
-});
+// });
 
 app.listen(PORT, () => {
-  console.log('8080 is the magic port');
+  console.log('listening on port: ' + PORT);
 });
