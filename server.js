@@ -10,7 +10,7 @@ const PORT = process.env.PORT || 8080;
 var app = express();
 // var guts;
 
-process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0;
+// process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0;
 
 // if(!bool) {
 //   guts = {
