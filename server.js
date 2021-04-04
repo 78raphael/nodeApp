@@ -2,6 +2,7 @@ const express = require('express');
 const path = require('path');
 // const { Pool } = require('pg');
 
+const homeController = require('./controllers/homeController.js');
 const verifyController = require('./controllers/verifyController.js');
 
 const PORT = process.env.PORT || 8080;
@@ -39,13 +40,7 @@ app.use(express.urlencoded({
 }));
 
 // index page
-app.get('/', (req, res) => {
-
-  res.render('pages/index', {
-  // mail: mail
-  });
-  res.end();
-});
+app.get('/', homeController.showHome);
 
 app.post('/validate', verifyController.verify);
 
