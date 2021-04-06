@@ -52,23 +52,40 @@ function showRegister(req, res) {
   });
 }
 
-function verifySignIn(req, res) {
+function signIn(req, res) {
   let username = req.body.username,
   password = req.body.password;
 
   homeModel.verify(username, password, (error, results)  => {
+
     if(error) {
       res.redirect('/');
       return;
     };
 
-    res.render('pages/landing', {
-      name: results
-    });
-    res.end();
+    req.session.user = req.body.username;
+    req.session.fullname = results;
+
+    console.log('Signed In');
+    res.redirect('/landing');
     return;
 
   });
+}
+
+function showLanding(req, res)  {
+  res.render('pages/landing', {
+    name: req.session.fullname
+  });
+  res.end();
+  return;
+}
+
+function signOut(req, res)  {
+  console.log('Signed Out');
+  req.session.destroy();
+  res.redirect('/');
+  return;
 }
 
 function showHome(req, res) {
@@ -81,7 +98,9 @@ function showHome(req, res) {
 
 module.exports = {
   showHome: showHome,
-  verifySignIn: verifySignIn,
+  signIn: signIn,
+  signOut: signOut,
   showRegister: showRegister,
+  showLanding: showLanding,
   submitRegistration: submitRegistration
 }
