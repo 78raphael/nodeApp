@@ -1,8 +1,10 @@
 const express = require('express');
 const path = require('path');
 const session = require('express-session');
+var md5 = require('md5');
 
 const homeController = require('./controllers/homeController.js');
+const formController = require('./controllers/formController.js');
 
 const PORT = process.env.PORT || 8080;
 
@@ -32,6 +34,17 @@ var checkLogin = function(req, res, next) {
   return;
 }
 
+var setHash = function(req, res, next)  {
+  let key1 = '2d9106baed378a7a0726505a552e669f';
+  let key2 = 'ce01c0d84fcb28013c47bb1881abf9316f0d7b62';
+  let ts = new Date();
+
+  req.session.hash = md5(ts+key2+key1);
+  req.session.ts = ts;
+
+  next();
+}
+
 // set the view engine to ejs
 app.set('view engine', 'ejs');
 app.use(express.static(path.join(__dirname, 'public')));
@@ -54,6 +67,8 @@ app.get('/landing', verifyLogin, homeController.showLanding);
 
 app.post('/login', homeController.signIn);
 app.post('/submit-register', homeController.submitRegistration);
+
+app.post('/form', verifyLogin, setHash, formController.postForm);
 
 
 app.listen(PORT, () => {

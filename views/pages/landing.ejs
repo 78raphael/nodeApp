@@ -12,9 +12,10 @@
 
   <main>
     <div class="jumbotron">
-      <div>Welcome, <%= name %></div>
+      <h3>Welcome, <%= name %></h3>
+      <br>
       <div>
-        Success, you are signed in and the database connection works.
+        <%- include('../partials/search'); %>
       </div>
     </div>
   </main>
@@ -25,3 +26,9 @@
 
   </body>
 </html>
+<script type="text/javascript" src="../js/test.js"></script>
+<script>
+  function test2()  {
+    console.log("hello world");
+  }
+</script>
